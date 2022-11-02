@@ -1,5 +1,5 @@
-import secrets
 import os
+import secrets
 
 baseDir = os.path.abspath(os.path.dirname(__name__))
 
