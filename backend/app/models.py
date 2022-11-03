@@ -1,3 +1,4 @@
+from flask import jsonify
 from dataclasses import dataclass
 from app import db
 from werkzeug.security import generate_password_hash, check_password_hash
@@ -32,8 +33,8 @@ class User(db.Model):
     avatar = db.Column(db.String(256))
     wallpaper = db.Column(db.String(256))
     sex = db.Column(db.String(10))
-    posts = db.relationship('Post', backref='author')
-    topics = db.relationship('Topic', secondary=user_topic, backref='authors')
+    posts = db.relationship('Post', backref='author', lazy='dynamic')
+    topics = db.relationship('Topic', secondary=user_topic, backref='authors', lazy='dynamic')
 
     def check_password(self, pw) -> object:
         return check_password_hash(self.password_hash, pw)
@@ -52,7 +53,7 @@ class Topic(db.Model):
 
     id = db.Column(db.Integer, primary_key=True)
     name = db.Column(db.String(64), index=True, unique=True, nullable=False)
-    posts = db.relationship('Post', backref='topic')
+    posts = db.relationship('Post', backref='topic', lazy='dynamic')
 
     def __repr__(self) -> str:
         return f"<Topic: {self.name}>"
@@ -85,3 +86,24 @@ class Post(db.Model):
 
     def __repr__(self) -> str:
         return f"<Post: {self.title}>"
+
+    @staticmethod
+    def json_encoder(data) -> object:
+        json_data = []
+        for author, topic, post in data:
+            encoded = {
+                "id": post.id,
+                "title": post.title,
+                "desc": post.desc,
+                "author": author,
+                "topic": topic,
+                "publish_at": post.publish,
+                "time_to_read": post.time_to_read,
+                "upvote": post.upvote,
+                "comment": post.comment,
+                "view": post.view,
+                "url": post.url
+            }
+            json_data.append(encoded)
+        
+        return {"data": json_data}
