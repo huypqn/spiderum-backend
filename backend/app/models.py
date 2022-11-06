@@ -81,6 +81,7 @@ class Post(db.Model):
     publish = db.Column(db.String(32))
     time_to_read = db.Column(db.String(32))
     url = db.Column(db.String(256), default='/post')
+    thumbnail = db.Column(db.String(256))
     author_id = db.Column(db.Integer, db.ForeignKey('user.id'))
     topic_id = db.Column(db.Integer, db.ForeignKey('topic.id'))
 
@@ -88,22 +89,29 @@ class Post(db.Model):
         return f"<Post: {self.title}>"
 
     @staticmethod
-    def json_encoder(data) -> object:
+    def json_encoder(data, pagination) -> object:
         json_data = []
-        for author, topic, post in data:
+        for author, email, topic, avatar, post in data:
             encoded = {
                 "id": post.id,
                 "title": post.title,
                 "desc": post.desc,
                 "author": author,
+                "email": email,
+                "username": email.split('@')[0],
                 "topic": topic,
-                "publish_at": post.publish,
+                "publish": post.publish,
                 "time_to_read": post.time_to_read,
                 "upvote": post.upvote,
                 "comment": post.comment,
                 "view": post.view,
-                "url": post.url
+                "url": post.url,
+                "thumbnail": post.thumbnail,
+                "avatar": avatar
             }
             json_data.append(encoded)
         
-        return {"data": json_data}
+        return {
+            "data": json_data,
+            "pagination": pagination
+        }
