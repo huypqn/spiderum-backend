@@ -12,6 +12,8 @@ python-dotenv = "*"
 flask-restful = "*"
 flask-cors = "*"
 gunicorn = "*"
+flask-mail = "*"
+pyjwt = "*"
 
 [dev-packages]
 
