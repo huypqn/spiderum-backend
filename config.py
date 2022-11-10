@@ -10,9 +10,7 @@ class Config(object):
     SQLALCHEMY_TRACK_MODIFICATIONS = False
     POSTS_PER_PAGE = 10
 
-    MAIL_SERVER = os.environ.get('MAIL_SERVER')
-    MAIL_PORT = int(os.environ.get('MAIL_PORT') or 25)
-    MAIL_USE_TLS = os.environ.get('MAIL_USE_TLS') is not None
-    MAIL_USERNAME = os.environ.get('MAIL_USERNAME')
-    MAIL_PASSWORD = os.environ.get('MAIL_PASSWORD')
-    NOREPLY = ['ikarosnoreply@gmail.com']
+    WEBSITE_URI = "https://www.google.com"
+    API_KEY = "e0f03f09b01086fb5c7ce6632ffe11fd"
+    API_SECRET = "5817357399d100ff4d65476ffd384b1f"
+    NOREPLY = 'spidermannoreply@gmail.com'

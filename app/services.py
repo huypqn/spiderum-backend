@@ -22,7 +22,7 @@ def verify_register_token(token):
     except:
         return {
             "code": 401,
-            "message": "Có lỗi xảy ra. Xin vui lòng thử lại sau"
+            "message": "Có lỗi xảy ra. Xin vui lòng thử lại sau!"
         }
     
     return {

@@ -1,10 +1,9 @@
-from flask import request, redirect
+from flask import request
 from app import app
-from app.email import send_register_email
 from app.models import User
+from app.email import send_register_email
 
-
-@app.route('/register', methods=['GET', 'POST'])
+@app.route('/v1/api/register', methods=['GET', 'POST'])
 def register():
     email = request.args.get('email')
     user = User.query.filter_by(email=email).first()
@@ -14,10 +13,15 @@ def register():
             "message": "Người dùng đã tồn tại. Vui lòng nhập Email khác!"
         }
     else:
-        send_register_email(email)
+        res = send_register_email(email)
 
-    return {
-        "code": 200,
-        "message": "Email xác nhận đã được gửi đến hòm thư pqh.one@gmail.com của bạn"
-    }
-
+    if res.status_code == 200:
+        return {
+            "code": 200,
+            "message": f"Email xác nhận đã được gửi đến hòm thư {email} của bạn"
+        }
+    else:
+        return {
+            "code": 401,
+            "message": "Đã có lỗi xảy ra khi gửi email. Vui lòng thử lại sau ít phút!"
+        }
