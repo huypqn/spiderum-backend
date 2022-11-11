@@ -3,8 +3,7 @@ from app import app
 from app.services import get_register_token
 
 def send_register_email(email):
-    token = get_register_token(email)
-    token_url = f"{app.config['WEBSITE_URI']}/search?q={token}"
+    token = f"{app.config['WEBSITE_URI']}/search?q={get_register_token(email)}"
     mailjet = Client(
         auth=(app.config['API_KEY'], app.config['API_SECRET']),
         version='v3.1'
@@ -26,7 +25,7 @@ def send_register_email(email):
                 "TemplateLanguage": True,
                 "Subject": "Xác nhận địa chỉ email cho tài khoản của bạn",
                 "Variables": {
-                    "token": token_url
+                    "token": token
                 }
             },
         ]

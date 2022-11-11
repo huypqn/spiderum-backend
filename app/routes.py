@@ -10,7 +10,7 @@ def register():
     if user:
         return {
             "code": 401,
-            "message": "Người dùng đã tồn tại. Vui lòng nhập Email khác!"
+            "message": "Email đã được sử dụng. Xin vui lòng chọn email khác!"
         }
     else:
         res = send_register_email(email)
