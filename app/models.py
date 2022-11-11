@@ -13,6 +13,7 @@ user_topic = db.Table(
 class User(db.Model):
 
     id: int
+    username: str
     email: str
     password_hash: str
     name: str
@@ -24,9 +25,10 @@ class User(db.Model):
     sex: str
 
     id = db.Column(db.Integer, primary_key=True)
+    username = db.Column(db.String(32), index=True, unique=True, nullable=False)
     email = db.Column(db.String(64), index=True, unique=True, nullable=False)
     password_hash = db.Column(db.String(128), nullable=False)
-    name = db.Column(db.String(64), default=str(email).split('@')[0])
+    name = db.Column(db.String(64))
     identity_number = db.Column(db.String(32), index=True)
     phone_number = db.Column(db.String(32))
     address = db.Column(db.String(128))
@@ -71,6 +73,7 @@ class Post(db.Model):
     publish: str
     time_to_read: str
     url: str
+    thumbnail: str
 
     id = db.Column(db.Integer, primary_key=True)
     title = db.Column(db.String(256), index=True, nullable=False)
@@ -81,9 +84,9 @@ class Post(db.Model):
     publish = db.Column(db.String(32))
     time_to_read = db.Column(db.String(32))
     url = db.Column(db.String(256), default='/post')
-    thumbnail = db.Column(db.String(256))
     author_id = db.Column(db.Integer, db.ForeignKey('user.id'))
     topic_id = db.Column(db.Integer, db.ForeignKey('topic.id'))
+    thumbnail = db.Column(db.String(256))
 
     def __repr__(self) -> str:
         return f"<Post: {self.title}>"
