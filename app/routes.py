@@ -22,6 +22,6 @@ def register():
         }
     else:
         return {
-            "code": 401,
+            "code": 503,
             "message": "Đã có lỗi xảy ra khi gửi email. Vui lòng thử lại sau ít phút!"
         }

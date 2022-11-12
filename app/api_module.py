@@ -1,17 +1,66 @@
-from flask import request, jsonify
+from flask import request, jsonify, url_for
 from flask_restful import Resource
 from sqlalchemy import func
 from app import app, api
 from app.models import db, User, Topic, Post
+from app.services import verify_register_token
 
-@api.resource('/v1/api/user')
-class UserResource(Resource):
+@api.resource('/v1/api/user/register')
+class UserRegisterResource(Resource):
     def get(self):
         args = request.args
         return
 
     def post(self):
-        return
+        payload = request.get_json()
+        token = payload.get('token')
+        # verify = verify_register_token(token)
+        if token == "123":
+            verify = {
+                "code": 200,
+                "message": "accepted"
+            }
+        else:
+            verify = {
+                "code": 401,
+                "message": "Có lỗi xảy ra. Xin vui lòng thử lại sau!"
+            }
+        if verify.get('code') == 200:
+            username = payload.get('username')
+            user = db.session.query(User).filter_by(username=username).first()
+            if user:
+                return {
+                    "code": 409,
+                    "message": "Tên đăng nhập đã tồn tại!"
+                }
+            password = payload.get('password')
+            name = payload.get('name') if payload.get('name') else username
+            identity = payload.get('identity_number') or None
+            phone_number = payload.get('phone_number') or None
+            user = User(
+                username=username,
+                email="test@example.com",
+                name=name,
+                identity_number=identity,
+                phone_number=phone_number,
+                avatar="https://www.gravatar.com/avatar/b5810e9b3bc27b71948c4d303e0c80ca?d=wavatar&f=y"
+            )
+            user.set_password(password)
+            db.session.add(user)
+            try:
+                db.session.commit()
+                return {
+                    "code": 200,
+                    "message": "Đăng ký thành công. Bạn sẽ được chuyển hướng về trang chủ sau 3s!"
+                }
+            except:
+                return {
+                    "code": 503,
+                    "message": "Có lỗi xảy ra. Xin vui lòng thử lại sau!"
+                }
+        
+        else:
+            return verify
 
     def patch(self):
         return
