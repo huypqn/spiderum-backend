@@ -1,6 +1,7 @@
-from flask import request
+import jwt
+from flask import request, jsonify, make_response
 from app import app
-from app.models import User
+from app.models import db, User
 from app.email import send_register_email
 
 @app.route('/v1/api/register', methods=['GET', 'POST'])
@@ -24,4 +25,43 @@ def register():
         return {
             "code": 503,
             "message": "Đã có lỗi xảy ra khi gửi email. Vui lòng thử lại sau ít phút!"
+        }
+
+@app.route('/v1/api/login', methods=['POST'])
+def login():
+    payload = request.get_json()
+    username = payload.get('username')
+    password = payload.get('password')
+
+    user = db.session.query(User).filter_by(username=username).first()
+    if user:
+        isCorrectPassword = user.check_password(password)
+        if isCorrectPassword:
+            token = jwt.encode(
+                {
+                    "id": 1234,
+                },
+                app.config['SECRET_KEY'],
+                algorithm='HS256'
+            )
+
+            res = jsonify({
+                "id": user.id,
+                "name": user.name,
+                "username": user.username
+            })
+
+            res.set_cookie(
+                'access_token',
+                value=token,
+                max_age=120,
+                httponly=True,
+                secure=True
+            )
+
+            return res
+    else:
+        return {
+            "code": 401,
+            "message": "Sai tên đăng nhập hoặc mật khẩu"
         }
