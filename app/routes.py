@@ -55,8 +55,8 @@ def login():
                 'access_token',
                 value=token,
                 max_age=120,
-                httponly=True,
-                secure=True
+                # httponly=False,
+                # secure=True
             )
 
             return res
