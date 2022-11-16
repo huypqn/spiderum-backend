@@ -39,7 +39,7 @@ def login():
         if isCorrectPassword:
             token = jwt.encode(
                 {
-                    "id": 1234,
+                    "id": user.id,
                 },
                 app.config['SECRET_KEY'],
                 algorithm='HS256'
@@ -50,13 +50,13 @@ def login():
                 "name": user.name,
                 "username": user.username
             })
-
             res.set_cookie(
                 'access_token',
                 value=token,
-                max_age=120,
-                # httponly=False,
-                # secure=True
+                max_age=60*60,
+                httponly=True,
+                secure=True,
+                samesite=None
             )
 
             return res

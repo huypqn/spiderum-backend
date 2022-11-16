@@ -11,7 +11,7 @@ app.config.from_object(Config)
 db = SQLAlchemy(app)
 migrate = Migrate(app, db)
 api = Api(app)
-cors = CORS(app)
+cors = CORS(app, supports_credentials=True)
 
 from app import routes, models, api_module, services
 
