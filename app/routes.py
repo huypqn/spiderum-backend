@@ -1,4 +1,5 @@
 import jwt
+import json
 from flask import request, jsonify, make_response
 from app import app
 from app.models import db, User
@@ -45,20 +46,30 @@ def login():
                 algorithm='HS256'
             )
 
-            res = jsonify({
+            payload = json.dumps({
                 "id": user.id,
                 "name": user.name,
-                "username": user.username
+                "username": user.username,
+                "avatar": user.avatar
             })
+
+            res = make_response()
+            
             res.set_cookie(
                 'access_token',
                 value=token,
                 max_age=60*60,
-                httponly=True,
-                secure=True,
-                samesite=None
+                samesite="None",
+                secure="True"
             )
 
+            res.set_cookie(
+                'user',
+                value=payload,
+                max_age=60*60,
+                samesite="None",
+                secure="True"
+            )
             return res
     else:
         return {
